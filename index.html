@@ -365,17 +365,18 @@
         if (section) section.scrollIntoView({ behavior: 'smooth' });
       });
 
-      // === НАСТРОЙКИ ===
-      const MENU_API_URL = 'https://script.google.com/macros/s/AKfycbyEt7UienynqMuHKXL-g6flmiupJAs0uWmnDY3lwN1X7n8vG319doB452SeiIWsSRE/exec'; // ← ЗАМЕНИТЕ НА СВОЙ GAS URL!
       const DEFAULT_IMAGE = 'https://github.com/sansej/image/blob/main/default.jpg?raw=true';
       const MENU_SECTIONS = [
         'Przystawki', 'Dodatki', 'Ramen', 'Desery', 'Napoje',
         'Makaron', 'Tempura', 'Herbaty', 'Piwo', 'Alkohol'
       ];
 
-      // === ФУНКЦИИ ОТОБРАЖЕНИЯ ===
+      function isAvailable(existValue) {
+        return existValue?.toString().trim().toLowerCase() === 'true';
+      }
+
       function createCardHTML(dish) {
-        const available = !!dish.Dostepnosc; // GAS возвращает true/false
+        const available = isAvailable(dish.Exist);
         const disabledClass = available ? '' : ' disabled';
         const imgUrl = dish.ImgID
           ? `https://drive.google.com/uc?export=view&id=${dish.ImgID}`
@@ -385,24 +386,25 @@
           <div class="card_body${disabledClass}">
             <div class="card_image_box">
               <div class="image">
-                <img src="${imgUrl}" alt="${dish.Nazwa || ''}">
+                <img src="${imgUrl}" alt="${dish.Name || ''}">
               </div>
             </div>
             <div class="card_description_box">
               <div class="description_box">
                 <div class="card_name_box">
-                  <h3 class="card_name_en">${dish.Nazwa || ''}</h3>
+                  <h3 class="card_name_en">${dish.Name || ''}</h3>
+                  <h3 class="card_name_jp">${dish.JPN || ''}</h3>
                 </div>
                 <div class="card_description">
-                  ${dish.Smaki ? `<div class="card_taste"><p class="description">${dish.Smaki}</p></div>` : ''}
-                  ${dish.Sklad ? `<div class="card_base"><p class="description">${dish.Sklad}</p></div>` : ''}
-                  ${dish.Dodatki ? `<div class="card_add"><p class="description">${dish.Dodatki}</p></div>` : ''}
-                  ${dish.Objetosc ? `<div class="card_size"><p class="description">${dish.Objetosc}</p></div>` : ''}
+                  ${dish.Taste ? `<div class="card_taste"><p class="description">${dish.Taste}</p></div>` : ''}
+                  ${dish.Base ? `<div class="card_base"><p class="description">${dish.Base}</p></div>` : ''}
+                  ${dish.Add ? `<div class="card_add"><p class="description">${dish.Add}</p></div>` : ''}
+                  ${dish.Massa ? `<div class="card_size"><p class="description">${dish.Massa}</p></div>` : ''}
                 </div>
               </div>
               <div class="price_body">
                 <div class="price_box">
-                  <span class="price">${dish.Cena || ''}</span>
+                  <span class="price">${dish.Price || ''}</span>
                 </div>
               </div>
             </div>
@@ -424,11 +426,9 @@
         `;
       }
 
-      // === ЗАГРУЗКА МЕНЮ ===
       async function generateMenu() {
         try {
-          const response = await fetch(MENU_API_URL);
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const response = await fetch('menu.json');
           const menu = await response.json();
 
           const html = MENU_SECTIONS.map(sec => 
@@ -437,8 +437,8 @@
 
           document.querySelector('.body_container').innerHTML = html;
         } catch (error) {
-          console.error('❌ Ошибка загрузки меню:', error);
-          document.querySelector('.body_container').innerHTML = '<p style="text-align:center;padding:20px;">Не удалось загрузить меню. Проверьте подключение.</p>';
+          console.error('❌ Ошибка загрузки menu.json:', error);
+          document.querySelector('.body_container').innerHTML = '<p style="text-align:center;padding:20px;">Не удалось загрузить меню.</p>';
         }
       }
 
