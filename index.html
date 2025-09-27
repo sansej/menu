@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Меню ресторана</title>
+    <style>
+      /* == BODY.CSS ======================================================================================================== */
+      body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f9f9f9;
+      }
+
+      .body_container {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+      }
+
+      .menu-title {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          font-size: 4rem;
+          color: #fff;
+          font-weight: 700;
+          text-shadow: 0 4px 16px rgba(0,0,0,0.8), 0 1px 0 #333;
+          font-family: 'Montserrat', 'Roboto', sans-serif;
+          letter-spacing: 0.25em;
+          z-index: 2;
+          pointer-events: none;
+          padding: 0.2em 1em;
+          background: rgba(0, 0, 0, 0.5);
+          border-radius: 0.5em;
+      }
+
+      .banner-container {
+          position: relative;
+      }
+
+      @media (max-width: 600px) {
+        .menu-title {
+          font-size: 2rem;
+          padding: 0.1em 0.5em;
+        }
+      }
+      /* == SECTION.CSS ======================================================================================================= */
+      .section_container {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      padding: 10px;
+      }
+
+      .section_name_container {
+          display: flex;
+          flex-direction: column;
+          gap: 15px;
+          padding: 10px;
+      }
+
+      .section_body_container {
+          display: flex;
+          flex-direction: column;
+          gap: 15px; /*расстояние между карточками */
+          padding: 1px;
+      }
+      /* == CARD.CSS =========================================================================================================== */
+      .card_body {
+          display: flex;
+          flex-direction: row;
+          align-items: stretch;
+          background: #fff;
+          border-radius: 15px;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          overflow: hidden; /* скрывает  */
+          height: calc(100vh / 5); /* Высота карточки */
+      }
+
+      .card_body.disabled {
+          filter: grayscale(1);
+          opacity: 0.5;
+          pointer-events: none;
+      }
+
+      .card_image_box {
+          flex: 0 0 auto;
+          /* height: 100%; */
+          aspect-ratio: 1; /* Сохраняем пропорции контейнера */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 15px; /* Скругленные углы контейнера */
+          padding: 10px; /* Отступы внутри контейнера */
+          overflow: hidden; /* Обрезаем содержимое, если выходит за границы */
+      }
+
+      .card_image_box .image {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          border-radius: 10px; /* Скругление для внутреннего блока */
+      }
+
+      .card_image_box .image img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover; /* Сохраняем пропорции и заполняем контейнер */
+          border-radius: 10px; /* Скругленные углы изображения */
+          /* Тень для выделения */
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+      }
+
+
+      /* Блок описания */
+      .card_description_box {
+          font-size: 10px;
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 10px;
+          align-items: stretch; /* По умолчанию растягивает элементы по высоте родителя */
+      }
+
+      .description_box {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          padding: 0px;
+          margin-bottom: 16px; /* Добавлен отступ вниз для разделения с price_body */
+      }
+
+      /* Названия (EN и JP) */
+      .card_name_box {
+          display: flex;
+          /* flex-direction: column; */
+          gap: 5px;
+      }
+
+      .card_name_en,
+      .card_name_jp {
+          font-size: 16px;
+          font-weight: bold;
+          margin: 0;
+      }
+
+      .card_description {
+          display: flex; /* Flexbox для гибкости */
+          flex-direction: column; /* Элементы располагаются вертикально */
+          gap: 8px; /* Расстояние между дочерними элементами */
+          background: #f2f2f2; /* Серый фон */
+          border-radius: 8px; /* Немного скруглим углы для красоты */
+          padding: 8px; /* Добавим внутренний отступ */
+      }
+
+      .card_description > div {
+          margin: 0; /* Убираем отступы сверху и снизу у внутренних блоков */
+      }
+
+      .description {
+          margin: 0; /* Убираем лишние отступы у текста */
+      }
+
+
+      /* Цена и кнопка */
+      .price_body {
+          display: flex;
+          justify-content: space-between; /* Равномерное распределение */
+          /* align-items: center; */
+          /* По умолчанию растягивает элементы по высоте родителя */
+          align-items: stretch;
+          margin-top: auto;
+      }
+
+      .price_box .price {
+          /* font-size: 14px;
+          font-weight: bold;
+          color: #333; */
+
+          flex: 1; /* Одинаковый размер для всех элементов */
+          /* border: 1px solid #ccc;  */
+          padding: 5px;
+          box-sizing: border-box; /* Учитываем padding и border в размере */
+      }
+
+      .botton_box .buy_button {
+          /* padding: 8px 15px;
+          font-size: 14px;
+          color: #fff;
+          background-color: #ff0000;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer; */
+          display: none !important;
+      }
+
+      .botton_box .buy_button:hover {
+          background-color: #ff0000;
+      }
+      /* == NAV.CSS =========================================================================================================== */
+      .menu-nav {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          background-color: #ffffff;
+          padding: 10px 20px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+      }
+
+      .menu-toggle-container {
+          display: flex;
+          align-items: center;
+          position: relative;
+      }
+
+      .menu-links {
+          display: none;
+          flex-direction: column;
+          background-color: #ffffff;
+          position: fixed;
+          left: 0;
+          right: 0;
+          top: 60px; /* Подберите под вашу высоту навигации */
+          padding: 10px;
+          box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+          z-index: 2000;
+      }
+
+      .menu-links.active {
+          display: flex;
+      }
+
+      .menu-links a {
+          text-decoration: none;
+          font-size: 16px;
+          color: #333;
+          padding: 5px 10px;
+          border-radius: 5px;
+          transition: background-color 0.3s;
+          text-align: center;
+          justify-content: center;
+      }
+
+      .menu-links a:hover {
+          background-color: #f0f0f0;
+          color: #007bff;
+      }
+
+      .menu-links a.active {
+          background-color: #007bff;
+          color: #fff;
+      }
+
+      /* Стили для кнопки "гамбургер" */
+      /* .menu-toggle {
+          background: none;
+          border: none;
+          font-size: 24px;
+          cursor: pointer;
+          color: #333;
+          position: sticky;
+          top: 10px;
+          z-index: 1100;
+      } */
+
+      .menu-select-container {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          padding: 10px 0;
+      }
+      #menu-select {
+          width: 90%;
+          font-size: 18px;
+          padding: 8px;
+          border-radius: 5px;
+          border: 1px solid #ccc;
+          text-align: center;
+          text-align-last: center;
+      }
+      /* == HEADER.CSS ======================================================================================================= */
+      .banner-item img {
+          width: 100%;
+          height: 220px; /* Можно изменить по желанию */
+          object-fit: cover;
+          object-position: center;
+          display: block;
+          filter: blur(2px); /* Добавлено размытие */
+      } 
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Roboto:wght@400;700&family=Montserrat:wght@500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Шапка сайта -->
+    <header class="header">
+        <div class="banner-container">
+            <div class="menu-title">MENU</div>
+            <div class="banner-item">
+                <picture>
+                  
+                    <!-- Изображение для мобильных -->
+                    <source srcset="https://github.com/sansej/image/blob/main/header.jpg?raw=true" media="(max-width: 767px)">
+                    <!-- Изображение для больших экранов -->
+                    <source srcset="https://github.com/sansej/image/blob/main/header.jpg?raw=true" media="(min-width: 768px)">
+                    <!-- Базовое изображение (по умолчанию) -->
+                    <!-- <img src="https://github.com/sansej/image/blob/main/header.jpg?raw=true" alt="Banner"> -->
+                    
+                    <img src="https://github.com/sansej/image/blob/main/header.jpg?raw=true" alt="Banner">
+                         
+                </picture>
+            </div>
+        </div>
+        <!-- <div class="cart" id="cart">
+            Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> zl
+        </div> -->
+    </header>
+
+    <!-- Основной блок -->
+    <main>
+        <nav class="menu-nav" id="menu-nav">
+            <div class="menu-select-container">
+                <select id="menu-select" aria-label="Навигация по меню">
+                    <option value="#przystawki">Przystawki</option>
+                    <option value="#dodatki">Dodatki</option>
+                    <option value="#ramen">Ramen</option>
+                    <option value="#desery">Desery</option>
+                    <option value="#napoje">Napoje</option>
+                    <option value="#makaron">Makaron</option>
+                    <option value="#tempura">Tempura</option>
+                    <option value="#herbaty">Herbaty</option>
+                    <option value="#piwo">Piwo</option>
+                    <option value="#alkohol">Alkohol</option>
+                </select>
+            </div>
+        </nav>
+        <!-- Только этот контейнер! Всё меню будет генерироваться сюда -->
+        <div class="body_container"></div>
+    </main>
+    <!-- Модальное окно корзины -->
+    <!-- <div id="cart-modal" class="modal">
+        <div class="modal-content">
+            <h2>Корзина</h2>
+            <ul id="cart-items"></ul>
+            <div id="cart-modal-total"></div>
+            <button id="checkout-button">Оформить заказ</button>
+            <button id="close-modal">Закрыть</button>
+        </div>
+    </div> -->
+
+    <script>
+      // === НАВИГАЦИЯ ===
+      document.getElementById('menu-select')?.addEventListener('change', function() {
+        const section = document.querySelector(this.value);
+        if (section) section.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      // === НАСТРОЙКИ ===
+      const MENU_API_URL = 'https://script.google.com/macros/s/AKfycbxksWPJIErlSLqXHF7V0YOEa0rsrOPKSieU1Cnyp8nfVPx6yHcs0zuqnWyAPxVyVFbM/exec'; // ← ЗАМЕНИТЕ НА СВОЙ GAS URL!
+      const DEFAULT_IMAGE = 'https://github.com/sansej/image/blob/main/default.jpg?raw=true';
+      const MENU_SECTIONS = [
+        'Przystawki', 'Dodatki', 'Ramen', 'Desery', 'Napoje',
+        'Makaron', 'Tempura', 'Herbaty', 'Piwo', 'Alkohol'
+      ];
+
+      // === ФУНКЦИИ ОТОБРАЖЕНИЯ ===
+      function createCardHTML(dish) {
+        const available = !!dish.Dostepnosc; // GAS возвращает true/false
+        const disabledClass = available ? '' : ' disabled';
+        const imgUrl = dish.ImgID
+          ? `https://drive.google.com/uc?export=view&id=${dish.ImgID}`
+          : DEFAULT_IMAGE;
+
+        return `
+          <div class="card_body${disabledClass}">
+            <div class="card_image_box">
+              <div class="image">
+                <img src="${imgUrl}" alt="${dish.Nazwa || ''}">
+              </div>
+            </div>
+            <div class="card_description_box">
+              <div class="description_box">
+                <div class="card_name_box">
+                  <h3 class="card_name_en">${dish.Nazwa || ''}</h3>
+                </div>
+                <div class="card_description">
+                  ${dish.Smaki ? `<div class="card_taste"><p class="description">${dish.Smaki}</p></div>` : ''}
+                  ${dish.Sklad ? `<div class="card_base"><p class="description">${dish.Sklad}</p></div>` : ''}
+                  ${dish.Dodatki ? `<div class="card_add"><p class="description">${dish.Dodatki}</p></div>` : ''}
+                  ${dish.Objetosc ? `<div class="card_size"><p class="description">${dish.Objetosc}</p></div>` : ''}
+                </div>
+              </div>
+              <div class="price_body">
+                <div class="price_box">
+                  <span class="price">${dish.Cena || ''}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      function createSectionHTML(sectionName, dishes) {
+        if (!dishes?.length) return '';
+        return `
+          <div id="${sectionName.toLowerCase()}" class="section_container">
+            <div class="section_name_container">
+              <h2 class="section_name">${sectionName}</h2>
+            </div>
+            <div class="section_body_container">
+              ${dishes.map(createCardHTML).join('')}
+            </div>
+          </div>
+        `;
+      }
+
+      // === ЗАГРУЗКА МЕНЮ ===
+      async function generateMenu() {
+        try {
+          const response = await fetch(MENU_API_URL);
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          const menu = await response.json();
+
+          const html = MENU_SECTIONS.map(sec => 
+            createSectionHTML(sec, menu[sec] || [])
+          ).join('');
+
+          document.querySelector('.body_container').innerHTML = html;
+        } catch (error) {
+          console.error('❌ Ошибка загрузки меню:', error);
+          document.querySelector('.body_container').innerHTML = '<p style="text-align:center;padding:20px;">Не удалось загрузить меню. Проверьте подключение.</p>';
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', generateMenu);
+    </script>
+</body>
+</html>
