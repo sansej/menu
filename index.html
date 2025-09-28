@@ -379,9 +379,7 @@
       function createCardHTML(dish) {
         const available = isAvailable(dish.Exist);
         const disabledClass = available ? '' : ' disabled';
-        const imgUrl = dish.ImgID
-          ? `https://drive.google.com/uc?export=view&id=${dish.ImgID}`
-          : DEFAULT_IMAGE;
+        const imgUrl = dish.ImageName ? `./images/${dish.ImageName}` : './images/default.jpg';
 
         return `
           <div class="card_body${disabledClass}">
