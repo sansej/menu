@@ -262,18 +262,6 @@
           color: #fff;
       }
 
-      /* Стили для кнопки "гамбургер" */
-      /* .menu-toggle {
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          color: #333;
-          position: sticky;
-          top: 10px;
-          z-index: 1100;
-      } */
-
       .menu-select-container {
           width: 100%;
           display: flex;
@@ -302,7 +290,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP&family=Roboto:wght@400;700&family=Montserrat:wght@500&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Шапка сайта -->
     <header class="header">
         <div class="banner-container">
             <div class="menu-title">MENU</div>
@@ -314,19 +301,13 @@
                     <!-- Изображение для больших экранов -->
                     <source srcset="https://github.com/sansej/image/blob/main/header.jpg?raw=true" media="(min-width: 768px)">
                     <!-- Базовое изображение (по умолчанию) -->
-                    <!-- <img src="https://github.com/sansej/image/blob/main/header.jpg?raw=true" alt="Banner"> -->
-                    
+                 
                     <img src="https://github.com/sansej/image/blob/main/header.jpg?raw=true" alt="Banner">
                          
                 </picture>
             </div>
         </div>
-        <!-- <div class="cart" id="cart">
-            Корзина (<span id="cart-count">0</span>) — <span id="cart-total">0</span> zl
-        </div> -->
     </header>
-
-    <!-- Основной блок -->
     <main>
         <nav class="menu-nav" id="menu-nav">
             <div class="menu-select-container">
@@ -347,17 +328,6 @@
         <!-- Только этот контейнер! Всё меню будет генерироваться сюда -->
         <div class="body_container"></div>
     </main>
-    <!-- Модальное окно корзины -->
-    <!-- <div id="cart-modal" class="modal">
-        <div class="modal-content">
-            <h2>Корзина</h2>
-            <ul id="cart-items"></ul>
-            <div id="cart-modal-total"></div>
-            <button id="checkout-button">Оформить заказ</button>
-            <button id="close-modal">Закрыть</button>
-        </div>
-    </div> -->
-
     <script>
       // === НАВИГАЦИЯ ===
       document.getElementById('menu-select')?.addEventListener('change', function() {
@@ -382,7 +352,7 @@
         let imageName = 'default.jpg';
         if (dish.Name) {
             // Заменяем пробелы на _, удаляем лишние символы (опционально)
-            const safeName = dish.Nazwa.trim().replace(/\s+/g, '_');
+            const safeName = dish.Name.trim().replace(/\s+/g, '_');
             imageName = `${safeName}.jpg`;
         }
 
