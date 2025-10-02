@@ -356,13 +356,13 @@
             imageName = `${safeName}.jpg`;
         }
 
-        const imgUrl = `./images/${imageName}`;
+        const imgUrl = `./image/${imageName}`;
 
         return `
           <div class="card_body${disabledClass}">
             <div class="card_image_box">
               <div class="image">
-                <img src="${imgUrl}" alt="${dish.Name || ''}" onerror="this.src='./images/default.jpg'">
+                <img src="${imgUrl}" alt="${dish.Name || ''}" onerror="this.src='./image/default.jpg'">
               </div>
             </div>
             <div class="card_description_box">
